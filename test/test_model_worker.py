@@ -14,28 +14,33 @@ class FakeClass:
         pass
 
 
-# qtbot is a pytest fixture used to test PyQt5. Part of the pytest-qt plugin.
+# qtbot is a pytest fixture used to test PySide6. Part of the pytest-qt
+# plugin.
 def test_worker_progress_callback(qtbot):
     """
-    Testing for the progress_callback parameter being present in the called function when progress_callback=True
+    Testing for the progress_callback parameter being present in the
+    called function when progress_callback=True
     """
     func_to_test = Mock()
     w = Worker(func_to_test, "test", 3, progress_callback=True)
 
-    # This starts the Worker in the threadpool and then blocks the test from progressing until the finished signal is
-    # emitted. qtbot is a pytest fixture used to test PyQt5.
+    # This starts the Worker in the threadpool and then blocks the test
+    # from progressing until the finished signal is emitted. qtbot is a
+    # pytest fixture used to test PySide6.
     threadpool = QThreadPool()
     with qtbot.waitSignal(w.signals.finished) as blocker:
         threadpool.start(w)
 
     assert w.fn == func_to_test
     assert w.kwargs['progress_callback'] is not None
-    func_to_test.assert_called_with("test", 3, progress_callback=w.kwargs['progress_callback'])
+    func_to_test.assert_called_with(
+        "test", 3, progress_callback=w.kwargs['progress_callback'])
 
 
 def test_worker_progress_callback_false(qtbot):
     """
-    Testing for the progress_callback parameter not being present in the called function when progress_callback=False
+    Testing for the progress_callback parameter not being present in the
+    called function when progress_callback=False
     """
     func_to_test = Mock()
     w = Worker(func_to_test, "test", 3, progress_callback=False)
@@ -51,7 +56,8 @@ def test_worker_progress_callback_false(qtbot):
 
 def test_worker_no_progress_callback(qtbot):
     """
-    Testing for the progress_callback parameter not being present in the called function when no progress_callback
+    Testing for the progress_callback parameter not being present in the
+    called function when no progress_callback
     """
     func_to_test = Mock()
     w = Worker(func_to_test, "test", 3)
@@ -67,13 +73,16 @@ def test_worker_no_progress_callback(qtbot):
 
 def test_worker_result_signal(qtbot, monkeypatch):
     """
-    Testing return value of worker's called function through result signal.
+    Testing return value of worker's called function through result
+    signal.
     """
     thing = FakeClass()
     thing.func_to_test = Mock(return_value=5, unsafe=True)
     w = Worker(thing.func_to_test, "test", 3)
 
-    with mock.patch.object(FakeClass, 'func_result', wraps=thing.func_result) as mock_func_result:
+    with mock.patch.object(
+            FakeClass, 'func_result',
+            wraps=thing.func_result) as mock_func_result:
         w.signals.result.connect(thing.func_result)
         threadpool = QThreadPool()
         with qtbot.waitSignal(w.signals.finished) as blocker:
@@ -85,7 +94,8 @@ def test_worker_result_signal(qtbot, monkeypatch):
 
 def test_worker_error_signal(qtbot):
     """
-    Testing return value of worker's called function through result signal.
+    Testing return value of worker's called function through result
+    signal.
     """
 
     thing = FakeClass()

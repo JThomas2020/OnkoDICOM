@@ -27,7 +27,8 @@ def test_trim_single_quotes():
     assert no_quotes == _trim_bracketing_single_quotes(left_quote)
     assert no_quotes == _trim_bracketing_single_quotes(both_quotes)
     assert no_quotes != _trim_bracketing_single_quotes(middle_only_quotes)
-    assert middle_only_quotes == _trim_bracketing_single_quotes(middle_with_both_quotes)
+    assert middle_only_quotes == _trim_bracketing_single_quotes(
+        middle_with_both_quotes)
 
 
 def test_check_specific_csv_file_exists():
@@ -39,9 +40,8 @@ def test_check_specific_csv_file_exists():
             test_path = test_path.joinpath(tmpdir)
             os.chdir(test_path)
             csv_filename = "patientHash.csv"
-            was_file_present, full_path_to_file = _check_identity_mapping_file_exists(
-                csv_filename
-            )
+            was_file_present, full_path_to_file = \
+                _check_identity_mapping_file_exists(csv_filename)
             assert not was_file_present
             assert not os.path.exists(full_path_to_file)
             expected_path = test_path.joinpath("data", "csv", csv_filename)
@@ -50,9 +50,8 @@ def test_check_specific_csv_file_exists():
             os.makedirs(os.path.dirname(specified_path))
             f = open(specified_path, mode="x")
             f.close()
-            was_file_present, full_path_to_file = _check_identity_mapping_file_exists(
-                csv_filename
-            )
+            was_file_present, full_path_to_file = \
+                _check_identity_mapping_file_exists(csv_filename)
             assert was_file_present
             assert os.path.exists(full_path_to_file)
             os.chdir(orig_cwd_path)
@@ -82,8 +81,9 @@ def test_create_hash_csv():
 
             csv_filename = "patientHash.csv"
             expected_path = test_path.joinpath("data", "csv", csv_filename)
-            # the _create_reidentification_spreadsheet() will fail unless the path is already in place
-            # it will not create the directories on its own.
+            # the _create_reidentification_spreadsheet() will fail
+            # unless the path is already in place it will not create the
+            # directories on its own.
             # so... create the directory in advance for the csv file
             os.makedirs(os.path.dirname(expected_path))
             assert os.path.exists(os.path.dirname(expected_path))
@@ -103,7 +103,8 @@ def test_create_hash_csv():
             lines = f.readlines()
             # header plus first row plus second row makes for three rows
             assert 3 == len(lines)
-            # print(f"Found {len(lines)} rows including header in {expected_path}")
+            # print(f"Found {len(lines)} rows including header in
+            # {expected_path}")
             f.close()
             # make sure duplicate entries are not created
             _create_reidentification_spreadsheet(
@@ -112,7 +113,8 @@ def test_create_hash_csv():
             f = open(expected_path, mode="r")
             lines = f.readlines()
             f.close()
-            # attempt to add a duplicate row does not result in an additional row
+            # attempt to add a duplicate row does not result in an
+            # additional row
             assert 3 == len(lines)
             os.chdir(orig_cwd_path)
     finally:
