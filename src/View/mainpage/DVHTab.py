@@ -19,7 +19,8 @@ class DVHTab(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
         self.patient_dict_container = PatientDictContainer()
-        self.dvh_calculated = self.patient_dict_container.has_attribute("raw_dvh")
+        self.dvh_calculated = self.patient_dict_container.has_attribute(
+            "raw_dvh")
 
         self.raw_dvh = None
         self.dvh_x_y = None
@@ -29,7 +30,8 @@ class DVHTab(QtWidgets.QWidget):
 
         self.dvh_tab_layout = QtWidgets.QVBoxLayout()
 
-        # Construct the layout based on whether or not the DVH has already been calculated.
+        # Construct the layout based on whether or not the DVH has
+        # already been calculated.
         if self.dvh_calculated:
             self.init_layout_dvh()
         else:
@@ -49,13 +51,16 @@ class DVHTab(QtWidgets.QWidget):
 
         self.dvh_tab_layout.setAlignment(QtCore.Qt.Alignment())
         self.dvh_tab_layout.addWidget(widget_plot)
-        self.dvh_tab_layout.addWidget(button_export, QtCore.Qt.AlignRight | QtCore.Qt.AlignRight)
+        self.dvh_tab_layout.addWidget(button_export,
+                                      QtCore.Qt.AlignRight
+                                      | QtCore.Qt.AlignRight)
 
     def init_layout_no_dvh(self):
         button_calc_dvh = QtWidgets.QPushButton("Calculate DVH")
         button_calc_dvh.clicked.connect(self.prompt_calc_dvh)
 
-        self.dvh_tab_layout.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
+        self.dvh_tab_layout.setAlignment(QtCore.Qt.AlignCenter
+                                         | QtCore.Qt.AlignCenter)
         self.dvh_tab_layout.addWidget(button_calc_dvh)
 
     def clear_layout(self):
@@ -73,22 +78,26 @@ class DVHTab(QtWidgets.QWidget):
         # Maximum value for x axis
         max_xlim = 0
 
-        # Plot for all the ROIs selected in the left column of the window
+        # Plot for all the ROIs selected in the left column of the
+        # window
         for roi in self.selected_rois:
             dvh = self.raw_dvh[int(roi)]
 
-            # Plot only the ROIs whose volume is non equal to 0
+            # Plot only the ROIs whose volume is non-equal to 0
             if dvh.volume != 0:
-                # Bincenters, obtained from the dvh object, give the x axis values
+                # Bincenters, obtained from the dvh object, give the x
+                # axis values
                 # (Doses originally in Gy unit)
                 bincenters = self.dvh_x_y[roi]['bincenters']
                 # print(self.dvh_x_y[roi])
 
-                # Counts, obtained from the dvh object, give the y axis values
+                # Counts, obtained from the dvh object, give the y axis
+                # values
                 # (values between 0 and dvh.volume)
                 counts = self.dvh_x_y[roi]['counts']
 
-                # Color of the line is the same as the color shown in the left column of the window
+                # Color of the line is the same as the color shown in
+                # the left column of the window
                 color = self.patient_dict_container.get("roi_color_dict")[roi]
                 color_R = color.red() / 255
                 color_G = color.green() / 255
@@ -99,7 +108,8 @@ class DVHTab(QtWidgets.QWidget):
                          label=dvh.name,
                          color=[color_R, color_G, color_B])
 
-                # Update the maximum value for x axis (usually different between ROIs)
+                # Update the maximum value for x axis (usually different
+                # between ROIs)
                 if (100 * bincenters[-1]) > max_xlim:
                     max_xlim = 100 * bincenters[-1]
 
@@ -133,13 +143,19 @@ class DVHTab(QtWidgets.QWidget):
         return fig
 
     def prompt_calc_dvh(self):
-        choice = QtWidgets.QMessageBox.question(self, "Calculate DVHs?", "Would you like to calculate DVHs? This may"
-                                                                         " take up to several minutes on some systems.",
-                                                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        choice = QtWidgets.QMessageBox.question(
+            self, "Calculate DVHs?",
+            "Would you like to calculate DVHs? This may"
+            " take up to several minutes on some systems.",
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
 
         if choice == QtWidgets.QMessageBox.Yes:
-            progress_window = CalculateDVHProgressWindow(self, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
-            progress_window.signal_dvh_calculated.connect(self.dvh_calculation_finished)
+            progress_window = CalculateDVHProgressWindow(
+                self,
+                QtCore.Qt.WindowTitleHint
+                | QtCore.Qt.WindowCloseButtonHint)
+            progress_window.signal_dvh_calculated.connect(
+                self.dvh_calculation_finished)
             progress_window.exec_()
 
     def dvh_calculation_finished(self):
@@ -151,13 +167,16 @@ class DVHTab(QtWidgets.QWidget):
     def update_plot(self):
         if self.dvh_calculated:
             # Get new list of selected rois that have DVHs calculated
-            self.selected_rois = [roi for roi in self.patient_dict_container.get("selected_rois")
+            self.selected_rois = [roi for roi in
+                                  self.patient_dict_container.get(
+                                      "selected_rois")
                                   if roi in self.raw_dvh.keys()]
 
             # Clear the current layout
             self.clear_layout()
 
-            # If the DVH has become outdated, show the user an indicator advising them such.
+            # If the DVH has become outdated, show the user an indicator
+            # advising them such.
             if self.patient_dict_container.get("dvh_outdated"):
                 self.display_outdated_indicator()
 
@@ -173,29 +192,35 @@ class DVHTab(QtWidgets.QWidget):
                 path + "/CSV/",
                 'DVH_' + basic_info['id'],
                 basic_info['id'])
-        save_reply = QtWidgets.QMessageBox.information(self, "Message",
-                                                      "The DVH Data was saved successfully in your directory!",
-                                                      QtWidgets.QMessageBox.Ok)
+        save_reply = QtWidgets.QMessageBox.information(
+            self, "Message",
+            "The DVH Data was saved successfully in your directory!",
+            QtWidgets.QMessageBox.Ok)
 
     def display_outdated_indicator(self):
         self.modified_indicator_widget = QtWidgets.QWidget()
         self.modified_indicator_widget.setContentsMargins(8, 5, 8, 5)
         # self.modified_indicator_widget.setFixedHeight(35)
         modified_indicator_layout = QtWidgets.QHBoxLayout()
-        modified_indicator_layout.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignLeft)
+        modified_indicator_layout.setAlignment(QtCore.Qt.AlignLeft
+                                               | QtCore.Qt.AlignLeft)
 
         modified_indicator_icon = QtWidgets.QLabel()
-        modified_indicator_icon.setPixmap(QtGui.QPixmap(resource_path("res/images/btn-icons/alert_icon.png")))
+        modified_indicator_icon.setPixmap(QtGui.QPixmap(resource_path(
+            "res/images/btn-icons/alert_icon.png")))
         modified_indicator_layout.addWidget(modified_indicator_icon)
 
-        modified_indicator_text = QtWidgets.QLabel("Contours have been modified since DVH calculation. Some DVHs may "
-                                                   "now be out of date.")
+        modified_indicator_text = QtWidgets.QLabel(
+            "Contours have been modified since DVH calculation. "
+            "Some DVHs may now be out of date.")
         modified_indicator_text.setStyleSheet("color: red")
         modified_indicator_layout.addWidget(modified_indicator_text)
 
         self.modified_indicator_widget.setLayout(modified_indicator_layout)
 
-        self.dvh_tab_layout.addWidget(self.modified_indicator_widget, QtCore.Qt.AlignTop | QtCore.Qt.AlignTop)
+        self.dvh_tab_layout.addWidget(self.modified_indicator_widget,
+                                      QtCore.Qt.AlignTop
+                                      | QtCore.Qt.AlignTop)
 
 
 class CalculateDVHProgressWindow(QtWidgets.QDialog):
@@ -205,7 +230,8 @@ class CalculateDVHProgressWindow(QtWidgets.QDialog):
     def __init__(self, *args, **kwargs):
         super(CalculateDVHProgressWindow, self).__init__(*args, **kwargs)
         layout = QtWidgets.QVBoxLayout()
-        text = QtWidgets.QLabel("Calculating DVHs... (This may take several minutes)")
+        text = QtWidgets.QLabel("Calculating DVHs... "
+                                "(This may take several minutes)")
         layout.addWidget(text)
         self.setWindowTitle("Please wait...")
         self.setLayout(layout)
@@ -217,14 +243,18 @@ class CalculateDVHProgressWindow(QtWidgets.QDialog):
         dataset_rtdose = self.patient_dict_container.dataset["rtdose"]
         rois = self.patient_dict_container.get("rois")
 
-        dict_thickness = ImageLoading.get_thickness_dict(dataset_rtss, self.patient_dict_container.dataset)
+        dict_thickness = ImageLoading.get_thickness_dict(
+            dataset_rtss, self.patient_dict_container.dataset)
 
         interrupt_flag = threading.Event()
         fork_safe_platforms = ['Linux']
         if platform.system() in fork_safe_platforms:
-            worker = Worker(ImageLoading.multi_calc_dvh, dataset_rtss, dataset_rtdose, rois, dict_thickness)
+            worker = Worker(ImageLoading.multi_calc_dvh, dataset_rtss,
+                            dataset_rtdose, rois, dict_thickness)
         else:
-            worker = Worker(ImageLoading.calc_dvhs, dataset_rtss, dataset_rtdose, rois, dict_thickness, interrupt_flag)
+            worker = Worker(ImageLoading.calc_dvhs, dataset_rtss,
+                            dataset_rtdose, rois,
+                            dict_thickness, interrupt_flag)
 
         worker.signals.result.connect(self.dvh_calculated)
 
