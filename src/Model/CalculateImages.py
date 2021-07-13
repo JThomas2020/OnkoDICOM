@@ -27,17 +27,18 @@ def get_img(pixel_array):
     Get a dictionary of image numpy array with only simple rescaling
 
     :param pixel_array: A list of converted pixel arrays
-    :return: dict_img, a dictionary of scaled pixel arrays with the basic rescaling parameter
+    :return: dict_img, a dictionary of scaled pixel arrays with the
+    basic rescaling parameter
     """
     dict_img = {}
     for i, np_pixels in enumerate(pixel_array):
-            max_val = np.amax(np_pixels)
-            min_val = np.amin(np_pixels)
-            np_pixels = (np_pixels - min_val) / (max_val - min_val) * 256
-            np_pixels[np_pixels < 0] = 0
-            np_pixels[np_pixels > 255] = 255
-            np_pixels = np_pixels.astype("int8")
-            dict_img[i] = np_pixels
+        max_val = np.amax(np_pixels)
+        min_val = np.amin(np_pixels)
+        np_pixels = (np_pixels - min_val) / (max_val - min_val) * 256
+        np_pixels[np_pixels < 0] = 0
+        np_pixels[np_pixels > 255] = 255
+        np_pixels = np_pixels.astype("int8")
+        dict_img[i] = np_pixels
     return dict_img
 
 
@@ -65,7 +66,8 @@ def scaled_pixmap(np_pixels, window, level):
 
     # Convert numpy array data to qimage for PySide6
     qimage = QtGui.QImage(
-        np_pixels, np_pixels.shape[1], np_pixels.shape[0], QtGui.QImage.Format_Indexed8)
+        np_pixels, np_pixels.shape[1], np_pixels.shape[0],
+        QtGui.QImage.Format_Indexed8)
     pixmap = QtGui.QPixmap(qimage)
     pixmap = pixmap.scaled(512, 512, QtCore.Qt.KeepAspectRatio)
     return pixmap
@@ -78,7 +80,8 @@ def get_pixmaps(pixel_array, window, level):
     :param pixel_array: A list of converted pixel arrays
     :param window: Window width of windowing function
     :param level: Level value of windowing function
-    :return: dict_pixmaps, a dictionary of all pixmaps within the patient.
+    :return: dict_pixmaps, a dictionary of all pixmaps within the
+    patient.
     """
     # Create a dictionary of storing pixmaps
     dict_pixmaps = {}
