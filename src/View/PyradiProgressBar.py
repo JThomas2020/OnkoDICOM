@@ -1,6 +1,6 @@
 """
-    This file handles all the processes done when performing Pyradiomics
-    and shows a progress bar while doing it.
+This file handles all the processes done when performing Pyradiomics
+and shows a progress bar while doing it.
 """
 
 import os
@@ -66,7 +66,8 @@ class PyradiExtended(QtCore.QThread):
         self.convert_rois_to_nrrd(self.path, rtss_path, mask_folder_path,
                                   self.my_callback)
 
-        # Something went wrong, in this case PyRadiomics will also log an error
+        # Something went wrong, in this case PyRadiomics will also log
+        # an error
         if nrrd_file_path is None or nrrd_folder_path is None:
             print('Error getting testcase!')
             exit()
@@ -110,7 +111,8 @@ class PyradiExtended(QtCore.QThread):
         # Set completed percentage to 25% and blank for ROI name
         callback(25, '')
 
-    def convert_rois_to_nrrd(self, path, rtss_path, mask_folder_path, callback):
+    def convert_rois_to_nrrd(self, path, rtss_path, mask_folder_path,
+                             callback):
         """
         Generate an nrrd file for each region of interest using Plastimatch.
 
@@ -123,7 +125,8 @@ class PyradiExtended(QtCore.QThread):
         path = '"' + path + '"'
         mask_folder_path = '"' + mask_folder_path + '"'
         rtss_path = '"' + rtss_path + '"'
-        # Command for generating an nrrd file for each region of interest
+        # Command for generating an nrrd file for each region of
+        # interest
         cmd_for_segmask = 'plastimatch convert --input ' + rtss_path + \
             ' --output-prefix ' + mask_folder_path + \
             ' --prefix-format nrrd --referenced-ct ' + path + ' 1>' + \
@@ -148,14 +151,19 @@ class PyradiExtended(QtCore.QThread):
         :return:                    Pandas dataframe
         """
 
-        # Initialize feature extractor using default pyradiomics settings
+        # Initialize feature extractor using default pyradiomics
+        # settings
         # Default features:
         #   first order, glcm, gldm, glrlm, glszm, ngtdm, shape
         # Default settings:
-        #   'minimumROIDimensions': 2, 'minimumROISize': None, 'normalize': False,
-        #   'normalizeScale': 1, 'removeOutliers': None, 'resampledPixelSpacing': None,
-        #   'interpolator': 'sitkBSpline', 'preCrop': False, 'padDistance': 5, 'distances': [1],
-        #   'force2D': False, 'force2Ddimension': 0, 'resegmentRange': None, 'label': 1,
+        #   'minimumROIDimensions': 2, 'minimumROISize': None,
+        #   'normalize': False,
+        #   'normalizeScale': 1, 'removeOutliers': None,
+        #   'resampledPixelSpacing': None,
+        #   'interpolator': 'sitkBSpline', 'preCrop': False,
+        #   'padDistance': 5, 'distances': [1],
+        #   'force2D': False, 'force2Ddimension': 0,
+        #   'resegmentRange': None, 'label': 1,
         #   'additionalInfo': True
         extractor = featureextractor.RadiomicsFeatureExtractor()
 
@@ -206,7 +214,8 @@ class PyradiExtended(QtCore.QThread):
 
         return radiomics_df
 
-    def convert_df_to_csv(self, radiomics_df, patient_hash, csv_path, callback):
+    def convert_df_to_csv(self, radiomics_df, patient_hash, csv_path,
+                          callback):
         """ Export dataframe as a csv file. """
 
         # If folder does not exist

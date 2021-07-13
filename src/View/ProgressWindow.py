@@ -39,7 +39,8 @@ class ProgressWindow(QDialog):
         image_loader = ImageLoader(selected_files, self)
         image_loader.signal_request_calc_dvh.connect(self.prompt_calc_dvh)
 
-        worker = Worker(image_loader.load, self.interrupt_flag, progress_callback=True)
+        worker = Worker(image_loader.load, self.interrupt_flag,
+                        progress_callback=True)
         worker.signals.result.connect(self.on_finish)
         worker.signals.error.connect(self.on_error)
         worker.signals.progress.connect(self.update_progress)
@@ -52,16 +53,21 @@ class ProgressWindow(QDialog):
 
     def update_progress(self, progress_update):
         """
-        Function responsible for updating the bar percentage and the label.
-        :param progress_update: A tuple containing update text and update percentage
+        Function responsible for updating the bar percentage and the
+        label.
+        :param progress_update: A tuple containing update text and
+        update percentage
         """
         self.text_field.setText(progress_update[0])
         self.progress_bar.setValue(progress_update[1])
 
     def prompt_calc_dvh(self):
-        choice = QMessageBox.question(self, "Calculate DVHs?", "RTSTRUCT and RTDOSE datasets identified. Would you "
-                                                               "like to calculate DVHs? (This may take up to several "
-                                                               "minutes on some systems.)",
+        choice = QMessageBox.question(self, "Calculate DVHs?",
+                                      "RTSTRUCT and RTDOSE datasets "
+                                      "identified. "
+                                      "Would you like to calculate DVHs? "
+                                      "(This may take up to several "
+                                      "minutes on some systems.)",
                                       QMessageBox.Yes | QMessageBox.No)
 
         if choice == QMessageBox.Yes:
@@ -75,5 +81,5 @@ class ProgressWindow(QDialog):
         elif type(err[1]) is ImageLoading.NotAllowedClassError:
             self.signal_error.emit(1)
 
-    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+    def close_event(self, event: QtGui.QCloseEvent) -> None:
         self.interrupt_flag.set()
